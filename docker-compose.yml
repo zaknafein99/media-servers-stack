@@ -50,10 +50,12 @@ services:
       - PGID=13000
       - VERSION=docker
       - PLEX_CLAIM=claim-yy15WX32hvdqXjFzXBPg
+      - NVIDIA_VISIBLE_DEVICES=all
     volumes:
       - '/mnt/d/Descargas/Media-Servers/config/plex-config:/config'
       - '/mnt/d/Descargas/Media-Servers/data/media:/media'
     restart: unless-stopped
+    runtime: nvidia
   jellyfin:
     image: ghcr.io/confusedpolarbear/jellyfin-intro-skipper
     container_name: jellyfin
@@ -63,19 +65,9 @@ services:
       - PGID=13000
       - UMASK=002
       - TZ="America/Montevideo"
-    # runtime: nvidia
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       devices:
-    #         - capabilities: [gpu]
+      - NVIDIA_VISIBLE_DEVICES=all
+    runtime: nvidia
     volumes:
-      # - /dev/nvidia-caps:/dev/nvidia-caps
-      # - /dev/nvidia0:/dev/nvidia0
-      # - /dev/nvidiactl:/dev/nvidiactl
-      # - /dev/nvidia-modeset:/dev/nvidia-modeset
-      # - /dev/nvidia-uvm:/dev/nvidia-uvm
-      # - /dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools
       - '/mnt/d/Descargas/Media-Servers/config/jellyfin-config:/config'
       - '/mnt/d/Descargas/Media-Servers/data/media:/data'
     ports:
