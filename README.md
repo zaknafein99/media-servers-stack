@@ -14,3 +14,5 @@
 ### Media servers
 - Plex
 - Jellyfin
+
+#### Follow [this](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker) to configure nvidia GPU support for docker
