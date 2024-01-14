@@ -209,8 +209,18 @@ services:
     image: ghcr.io/gethomepage/homepage:latest
     container_name: homepage
     ports:
-      - 3000:3000
+      - 3001:3000
     volumes:
       - /mnt/c/media-servers/config/homepage:/app/config # Make sure your local config directory exists
       - /var/run/docker.sock:/var/run/docker.sock # (optional) For docker integrations
+  homeassistant:
+    container_name: homeassistant
+    image: ghcr.io/home-assistant/home-assistant:stable
+    volumes:
+      - /mnt/c/media-servers/config/homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
 networks: {}
