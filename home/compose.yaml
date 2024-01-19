@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    ports:
+      - 3001:3000
+    env_file: .env
+    volumes:
+      - /mnt/c/media-servers/config/homepage:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /mnt/c:/mnt/c
+      - /mnt/d:/mnt/d
+    restart: unless-stopped
+  homeassistant:
+    container_name: homeassistant
+    image: ghcr.io/home-assistant/home-assistant:stable
+    volumes:
+      - /mnt/c/media-servers/config/homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+networks: {}

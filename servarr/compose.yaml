@@ -1,0 +1,118 @@
+version: "3.8"
+services:
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=1000 # Allow access to viewing containers
+      - PGID=1000 # Allow access to viewing services (necessary when using Docker Swarm)
+      - UMASK=002 # Allow access to viewing tasks (necessary when using Docker Swarm)
+      - TZ=America/Montevideo # Disallow any POST operations (effectively read-only)
+    volumes:
+      - /mnt/c/media-servers/config/sonarr-config:/config
+      - /mnt/d/media-servers/data:/data
+      - /mnt/c/media-servers/data:/mnt
+    ports:
+      - 8989:8989 # Mounted as read-only
+    restart: unless-stopped
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=America/Montevideo
+    volumes:
+      - /mnt/c/media-servers/config/radarr-config:/config
+      - /mnt/c/media-servers/data:/data
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+  lidarr:
+    container_name: lidarr
+    image: ghcr.io/hotio/lidarr
+    ports:
+      - 8686:8686
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=Etc/UTC
+    volumes:
+      - /mnt/c/media-servers/config/lidarr:/config
+      - /mnt/d/media-servers/data:/data
+      - /mnt/c/media-servers/data:/mnt
+  whisparr:
+    container_name: whisparr
+    image: ghcr.io/hotio/whisparr
+    ports:
+      - 6969:6969
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=America/Montevideo
+    volumes:
+      - /mnt/c/media-servers/data:/data
+      - /mnt/c/media-servers/config/whisparr-config:/config
+    restart: unless-stopped
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:develop
+    container_name: prowlarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=America/Montevideo
+    volumes:
+      - /mnt/c/media-servers/config/prowlarr-config:/config
+    ports:
+      - 9696:9696
+    restart: unless-stopped
+  bazarr:
+    container_name: bazarr
+    image: ghcr.io/hotio/bazarr # should be owner of volumes
+    ports:
+      - 6767:6767
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=America/Montevideo
+    volumes:
+      # Optional: put your config options customization here. Examples:
+      - /mnt/c/media-servers/config/bazarr:/config
+      - /mnt/c/media-servers/data/media:/data
+      - /mnt/d/media-servers/data/media:/mnt
+    restart: unless-stopped
+  homarr:
+    container_name: homarr
+    image: ghcr.io/ajnart/homarr:latest
+    restart: unless-stopped
+    volumes:
+      - /mnt/c/media-servers/config/homarr:/app/data/configs
+      - /mnt/c/media-servers/config/homarr/icons:/app/public/icons
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /mnt/c/media-servers/config/homarr/data:/data
+    ports:
+      - 7575:7575
+  qbittorrent:
+    container_name: qbittorrent
+    image: ghcr.io/hotio/qbittorrent
+    ports:
+      - 8081:8081
+      # should be owner of volumes
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=Etc/UTC
+      - WEBUI_PORTS=8081/tcp,8081/udp
+    volumes:
+      - /mnt/c/media-servers/config/qbittorrent-config:/config
+      - /mnt/c/media-servers/data/torrents:/data/torrents
+    restart:
+      # Optional: put your config options customization here. Examples:
+      unless-stopped
+networks: {}

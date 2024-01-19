@@ -1,0 +1,44 @@
+version: "3.8"
+services:
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - VERSION=docker
+      - PLEX_CLAIM=claim-yy15WX32hvdqXjFzXBPg
+    volumes:
+      - /mnt/c/media-servers/config/plex-config:/config
+      - /mnt/c/media-servers/data/media:/media
+      - /mnt/d/media-servers/data/media:/mnt
+    restart: unless-stopped
+  jellyfin:
+    image: ghcr.io/confusedpolarbear/jellyfin-intro-skipper
+    container_name: jellyfin
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Montevideo
+    volumes:
+      - /mnt/c/media-servers/config/jellyfin-config:/config
+      - /mnt/c/media-servers/data/media:/data
+      - /mnt/d/media-servers/data/media:/mnt
+    restart: unless-stopped
+  navidrome:
+    container_name: navidrome
+    image: deluan/navidrome:latest
+    user: 1000:1000
+    ports:
+      - 4533:4533
+    restart: unless-stopped
+    environment:
+      ND_SCANSCHEDULE: 1h
+      ND_LOGLEVEL: info
+      ND_SESSIONTIMEOUT: 24h
+    volumes:
+      - /mnt/c/media-servers/config/navidrome:/data
+      - /mnt/d/media-servers/data/media/music:/music:ro
+networks: {}
